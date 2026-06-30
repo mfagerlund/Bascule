@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://examples/physics/PhysicsArm.cs" id="1_arm"]
+
+[sub_resource type="RectangleShape2D" id="shape"]
+size = Vector2(120, 10)
+
+[node name="PhysicsArm" type="Node2D"]
+script = ExtResource("1_arm")
+
+[node name="Rotor" type="RigidBody2D" parent="."]
+gravity_scale = 0.0
+collision_layer = 0
+collision_mask = 0
+can_sleep = false
+angular_damp = 3.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Rotor"]
+shape = SubResource("shape")

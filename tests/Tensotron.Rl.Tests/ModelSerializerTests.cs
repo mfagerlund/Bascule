@@ -48,6 +48,40 @@ public class ModelSerializerTests
     }
 
     [Fact]
+    public void Roundtrip_reproduces_a_mixed_continuous_discrete_policy()
+    {
+        // A mixed head (discrete Fire first, then continuous Aim) reconstructs from the saved control
+        // spec alone — wider policy layer, logstd sized to the continuous count — and reproduces greedy
+        // actions exactly: continuous clamped, discrete argmax.
+        Init.Seed(3);
+        var rng = new Random(3);
+        var probe = new AimAndFire(rng);
+        var controls = probe.Controls;
+        var ac = new ActorCritic(probe.ObservationSize, controls, hidden: 16);
+        new Ppo(ac, () => new AimAndFire(rng), rng) { NumEnvs = 8, Horizon = 16, Epochs = 2 }.Train(1);
+
+        var reference = ac.SnapshotCpu();
+        var refLayout = ac.Layout;
+        var policy = ModelSerializer.Load(ModelSerializer.Save(ac, controls));
+        Assert.Equal(ac.ActionSize, policy.ActionSize);   // env-facing channel count (2), not head width (3)
+
+        var po = new float[ac.PolicyOutSize];
+        var expected = new float[ac.ActionSize];
+        var actual = new float[ac.ActionSize];
+        var evalRng = new Random(456);
+        for (int trial = 0; trial < 50; trial++)
+        {
+            var obs = new[] { (float)(evalRng.NextDouble() * 2 - 1), evalRng.NextDouble() < 0.5 ? 0f : 1f };
+            reference.Forward(obs, po, out _);
+            refLayout.Greedy(po, expected);
+
+            policy.Act(obs, actual);
+            Assert.Equal(expected[0], actual[0], 5);  // discrete category index
+            Assert.Equal(expected[1], actual[1], 5);  // continuous clamped mean
+        }
+    }
+
+    [Fact]
     public void Roundtrip_preserves_metadata_and_controlspec()
     {
         var ac = MakeTrained(out var controls);

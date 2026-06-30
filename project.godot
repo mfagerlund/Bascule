@@ -1,6 +1,10 @@
 ; Engine configuration file.
-; Generated/maintained by hand for the Tensotron.Godot scaffold.
-; See https://docs.godotengine.org/en/stable/classes/class_projectsettings.html
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
 
@@ -8,6 +12,7 @@ config_version=5
 
 config/name="Tensotron.Godot"
 config/description="Train game AI inside Godot in pure C# via Tensotron — no Python, no native runtime."
+run/main_scene="res://examples/cartpole/CartPoleDemo.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 
 [dotnet]

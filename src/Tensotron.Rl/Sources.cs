@@ -40,3 +40,17 @@ public interface IRewardSource
     /// <summary>Reset any per-episode accumulators at the start of a new episode.</summary>
     void ResetEpisode();
 }
+
+/// <summary>
+/// Optional fourth discovery role: restoring an arena's <em>world</em> to a fresh start-of-episode
+/// state — teleport bodies, zero velocities, re-randomize. Distinct from <see cref="IRewardSource"/>'s
+/// per-episode bookkeeping reset: a node implements this when ending an episode means physically
+/// resetting the scene. In the synchronous/console path the caller owns world reset (via
+/// <see cref="CompositeEnvironment"/>'s reset delegate); in Godot, where the world is the scene, the
+/// arena node advertises this and the composition restores it when the episode terminates.
+/// </summary>
+public interface IEpisodeReset
+{
+    /// <summary>Restore this part of the world to a fresh episode start.</summary>
+    void ResetEpisode();
+}

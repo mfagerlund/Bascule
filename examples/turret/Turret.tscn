@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://examples/turret/TurretArena.cs" id="1_arena"]
+[ext_resource type="Script" path="res://examples/turret/TurretGun.cs" id="2_gun"]
+[ext_resource type="Script" path="res://examples/turret/TargetSensor.cs" id="3_sensor"]
+[ext_resource type="Script" path="res://examples/turret/HitReward.cs" id="4_reward"]
+
+[node name="TurretArena" type="Node2D"]
+script = ExtResource("1_arena")
+
+[node name="TurretGun" type="Node" parent="."]
+script = ExtResource("2_gun")
+
+[node name="TargetSensor" type="Node" parent="."]
+script = ExtResource("3_sensor")
+
+[node name="HitReward" type="Node" parent="."]
+script = ExtResource("4_reward")

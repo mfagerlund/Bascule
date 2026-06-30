@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://examples/cartpole/CartPoleDemo.cs" id="1_demo"]
+[ext_resource type="Script" path="res://addons/tensotron/LearningAgent.cs" id="2_agent"]
+[ext_resource type="PackedScene" path="res://examples/cartpole/CartPole.tscn" id="3_arena"]
+[ext_resource type="Script" path="res://addons/tensotron/TrainingHud.cs" id="4_hud"]
+
+[node name="CartPoleDemo" type="Node2D"]
+script = ExtResource("1_demo")
+TargetIterations = 12
+
+[node name="LearningAgent" type="Node" parent="."]
+script = ExtResource("2_agent")
+Mode = 1
+ArenaScene = ExtResource("3_arena")
+ArenaCount = 16
+Hidden = 32
+Horizon = 48
+Epochs = 3
+MinibatchSize = 256
+LearningRate = 0.003
+
+[node name="TrainingHud" type="CanvasLayer" parent="."]
+script = ExtResource("4_hud")
+Title = "Cart-Pole PPO"
+TargetIterations = 12
+ConfigureWindow = true
+WindowSize = Vector2i(1180, 820)
+StackGraphs = false

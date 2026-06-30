@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://examples/turret/TurretDemo.cs" id="1_demo"]
+[ext_resource type="Script" path="res://addons/tensotron/LearningAgent.cs" id="2_agent"]
+[ext_resource type="PackedScene" path="res://examples/turret/Turret.tscn" id="3_arena"]
+[ext_resource type="Script" path="res://addons/tensotron/TrainingHud.cs" id="4_hud"]
+
+[node name="TurretDemo" type="Node2D"]
+script = ExtResource("1_demo")
+TargetIterations = 30
+
+[node name="LearningAgent" type="Node" parent="."]
+script = ExtResource("2_agent")
+Mode = 1
+ArenaScene = ExtResource("3_arena")
+ArenaCount = 16
+Hidden = 48
+Horizon = 64
+Epochs = 4
+MinibatchSize = 256
+LearningRate = 0.003
+EntropyCoef = 0.005
+
+[node name="TrainingHud" type="CanvasLayer" parent="."]
+script = ExtResource("4_hud")
+Title = "Turret PPO"
+TargetIterations = 30
+ConfigureWindow = true
+WindowSize = Vector2i(1300, 700)

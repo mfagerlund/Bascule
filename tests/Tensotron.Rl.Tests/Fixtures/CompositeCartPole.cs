@@ -101,13 +101,22 @@ internal sealed class CartPoleReward : IRewardSource
 
 internal static class CompositeCartPole
 {
+    /// <summary>The composed cart-pole as an <see cref="IEnvironment"/> for the synchronous trainer.</summary>
     public static CompositeEnvironment Create(Random rng, int maxSteps)
+    {
+        var (world, agent) = CreateRaw(rng, maxSteps);
+        return new CompositeEnvironment(agent, world.Integrate, world.Reset, dt: CartPoleWorld.Tau);
+    }
+
+    /// <summary>The raw world + its <see cref="CompositeAgent"/>, for driving the inverted/batched tick
+    /// loop directly (the host owns advancing and resetting the world, as Godot does).</summary>
+    public static (CartPoleWorld world, CompositeAgent agent) CreateRaw(Random rng, int maxSteps)
     {
         var world = new CartPoleWorld(rng, maxSteps);
         var agent = new CompositeAgent(
             new IObservationSource[] { new CartPoleObservation(world) },
             new IControlSurface[] { new CartPoleForce(world) },
             new IRewardSource[] { new CartPoleReward(world) });
-        return new CompositeEnvironment(agent, world.Integrate, world.Reset, dt: CartPoleWorld.Tau);
+        return (world, agent);
     }
 }

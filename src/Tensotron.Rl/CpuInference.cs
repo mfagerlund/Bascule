@@ -67,18 +67,20 @@ public sealed class CpuActorCritic
     private readonly float[] _valueBuf = new float[1];
 
     public int StateSize { get; }
-    public int ActionSize { get; }
+    /// <summary>Width of the raw policy head output (continuous means + discrete logits).</summary>
+    public int PolicyOutSize { get; }
 
-    internal CpuActorCritic(CpuMlp policy, CpuMlp value, int stateSize, int actionSize)
+    internal CpuActorCritic(CpuMlp policy, CpuMlp value, int stateSize, int policyOutSize)
     {
         _policy = policy; _value = value;
-        StateSize = stateSize; ActionSize = actionSize;
+        StateSize = stateSize; PolicyOutSize = policyOutSize;
     }
 
-    /// <summary>Policy mean (into <paramref name="meanOut"/>, length >= ActionSize) and value for one state.</summary>
-    public void Forward(ReadOnlySpan<float> state, Span<float> meanOut, out float value)
+    /// <summary>Raw policy head (into <paramref name="policyOut"/>, length >= PolicyOutSize) and value
+    /// for one state. Turning the head into an env-facing action is <see cref="ActionLayout"/>'s job.</summary>
+    public void Forward(ReadOnlySpan<float> state, Span<float> policyOut, out float value)
     {
-        _policy.Forward(state, meanOut);
+        _policy.Forward(state, policyOut);
         _value.Forward(state, _valueBuf);
         value = _valueBuf[0];
     }

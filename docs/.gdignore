@@ -1,0 +1,3 @@
+# Keep Godot's resource scanner out of this directory — it is .NET source / the engine
+# submodule / docs, not Godot content. The C# build still compiles it via the .slnx project
+# references; this only stops Godot from importing it as game assets.

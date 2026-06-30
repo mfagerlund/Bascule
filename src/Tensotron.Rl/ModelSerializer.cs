@@ -98,9 +98,13 @@ public static class ModelSerializer
             dict[name] = Tensor.FromShaped(arr, dims);
         }
 
-        // Rebuild the same architecture, copy the saved weights in by name, then take a host
-        // snapshot for launch-free inference. Reusing ActorCritic keeps the layer wiring in one place.
-        var ac = new ActorCritic(stateSize, actionSize, hidden);
+        // Rebuild the same architecture from the saved control layout (so discrete channels restore the
+        // right policy-head width), copy the saved weights in by name, then take a host snapshot for
+        // launch-free inference. Reusing ActorCritic keeps the layer wiring in one place.
+        if (controls.Count != actionSize)
+            throw new InvalidOperationException(
+                $"Model action size {actionSize} disagrees with its {controls.Count}-channel control spec.");
+        var ac = new ActorCritic(stateSize, controls, hidden);
         ac.LoadState(dict);
         return new InferencePolicy(ac.SnapshotCpu(), controls);
     }

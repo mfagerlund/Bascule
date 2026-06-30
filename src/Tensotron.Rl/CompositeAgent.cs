@@ -14,6 +14,7 @@ public sealed class CompositeAgent
     private readonly IObservationSource[] _observations;
     private readonly IControlSurface[] _controls;
     private readonly IRewardSource[] _rewards;
+    private readonly IEpisodeReset[] _resets;
     private readonly int[] _obsOffsets;     // start index of each observation source in the vector
     private readonly int[] _channelCounts;  // action-channel count of each control surface
 
@@ -29,11 +30,13 @@ public sealed class CompositeAgent
     public CompositeAgent(
         IReadOnlyList<IObservationSource> observations,
         IReadOnlyList<IControlSurface> controls,
-        IReadOnlyList<IRewardSource> rewards)
+        IReadOnlyList<IRewardSource> rewards,
+        IReadOnlyList<IEpisodeReset>? resets = null)
     {
         _observations = observations.ToArray();
         _controls = controls.ToArray();
         _rewards = rewards.ToArray();
+        _resets = resets?.ToArray() ?? System.Array.Empty<IEpisodeReset>();
 
         _obsOffsets = new int[_observations.Length];
         int obsTotal = 0;
@@ -92,9 +95,12 @@ public sealed class CompositeAgent
         return false;
     }
 
-    /// <summary>Reset per-episode state on every reward source.</summary>
+    /// <summary>Start a new episode: restore the world via every <see cref="IEpisodeReset"/> source,
+    /// then clear per-episode bookkeeping on every reward source. World reset runs first so reward
+    /// sources that read post-reset state see the fresh world.</summary>
     public void ResetEpisode()
     {
+        for (int i = 0; i < _resets.Length; i++) _resets[i].ResetEpisode();
         for (int i = 0; i < _rewards.Length; i++) _rewards[i].ResetEpisode();
     }
 }
