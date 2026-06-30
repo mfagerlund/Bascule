@@ -1,0 +1,3 @@
+[submodule "lib/Tensotron"]
+	path = lib/Tensotron
+	url = https://mfagerlund@github.com/mfagerlund/Tensotron.git

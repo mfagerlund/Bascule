@@ -1,0 +1,19 @@
+; Engine configuration file.
+; Generated/maintained by hand for the Tensotron.Godot scaffold.
+; See https://docs.godotengine.org/en/stable/classes/class_projectsettings.html
+
+config_version=5
+
+[application]
+
+config/name="Tensotron.Godot"
+config/description="Train game AI inside Godot in pure C# via Tensotron — no Python, no native runtime."
+config/features=PackedStringArray("4.7", "C#", "Forward Plus")
+
+[dotnet]
+
+project/assembly_name="Tensotron.Godot"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/tensotron/plugin.cfg")
