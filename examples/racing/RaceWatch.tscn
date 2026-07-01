@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://examples/racing/RaceWatchDemo.cs" id="1_watch"]
+[ext_resource type="Script" path="res://examples/racing/RaceOverlay.cs" id="2_overlay"]
+[ext_resource type="Script" path="res://addons/bascule/LearningAgent.cs" id="3_agent"]
+[ext_resource type="PackedScene" path="res://examples/racing/RaceCar.tscn" id="4_arena"]
+
+[node name="RaceWatchDemo" type="Node2D"]
+script = ExtResource("1_watch")
+
+[node name="RaceOverlay" type="Node2D" parent="."]
+script = ExtResource("2_overlay")
+
+[node name="LearningAgent" type="Node" parent="."]
+script = ExtResource("3_agent")
+Mode = 2
+AutoStart = false
+ArenaScene = ExtResource("4_arena")
+ArenaCount = 24

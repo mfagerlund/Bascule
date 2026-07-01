@@ -1,7 +1,7 @@
 using Godot;
-using Tensotron.Rl;
+using Bascule.RL;
 
-namespace Tensotron.Godot.Examples;
+namespace Bascule.Godot.Examples;
 
 /// <summary>
 /// The reward role: surfaces the arena's per-step reward (aim shaping plus the shot payoff) and ends

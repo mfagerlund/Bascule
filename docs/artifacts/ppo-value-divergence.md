@@ -1,13 +1,32 @@
 # PPO value-function divergence (loss → 1e8, return climbs then collapses)
 
-A portable write-up of a PPO failure mode found and fixed in **Tensotron.Godot** and the
-**Tensotron showcase `ContinuousPpo`** (both **FIXED** — see the status table in §5), almost
-certainly present in **Evolvatron.Walker**. If your PPO uses an MSE value loss on the raw
-bootstrapped return with no return/value normalization, you have this bug latent — it just
-hasn't bitten yet.
+A portable write-up of a PPO failure mode found and fixed in **Bascule** and the
+**Tensotron showcase `ContinuousPpo`** (both **FIXED** — see the status table in §5). If your
+PPO uses an MSE value loss on the raw bootstrapped return with no return/value normalization,
+you have this bug latent — it just hasn't bitten yet.
 
 This is a *different* failure from the NaN crash; both are covered below because they look
 similar from the outside (training "falls apart") and a robust PPO wants both fixes.
+
+> **Scope — what is and isn't fixed.** This document covers two failures that ARE fixed: the
+> value-loss divergence (→ return normalization) and the NaN crash (→ logStd clamp + non-finite
+> guard). There is a **third**, separate way a run can still "climb then collapse" that these fixes
+> do **not** eliminate: **entropy/σ collapse + critic drift** on long runs (the policy sharpens to a
+> near-deterministic σ, importance ratios then explode on any nudge, and the unclipped critic drifts
+> on the narrowing state distribution). At a too-high learning rate this can still drag a converged
+> policy off its peak — observed as a rising `TotalSkippedUpdates` and a slow return decay (NOT a
+> NaN crash; the guard prevents that). It is **mitigated** by saving the best-smoothed checkpoint
+> rather than the last and freezing training at the peak (`LearningAgent.Stop()`), and now actively
+> fought by two on-by-default levers: a **KL early-stop** (`TargetKl`) that caps how far a single
+> update moves the policy, and a **reactive LR backoff** that shrinks the learning rate when the policy
+> persistently strains against that trust region (a streak of KL early-stops) or trips the crash guard.
+> Measured on the drift-racer pushed well past its peak at an aggressive LR (best-checkpoint disabled),
+> the two levers took the guarded-update count from **1861 → 0** and turned a peak-then-collapse
+> (~38 → ~11) into a stable plateau that held its ~30 peak. A subtle interaction worth knowing: KL
+> early-stop *suppresses* the skip signal, so an LR backoff gated only on skips never fires once KL
+> early-stop is on — the backoff must also watch the KL-early-stop streak (see
+> [[ppo-value-divergence-crossrepo]]). Remaining levers (a higher σ floor, value-function clipping)
+> are future work; a small positive entropy coefficient is already exposed (`EntropyCoef`).
 
 ---
 
@@ -69,7 +88,7 @@ exactly what stops the divergence.
 
 This is the same idea as PopArt / SB3's return normalization, done minimally.
 
-Pseudization (see real code in `src/Tensotron.Rl/PpoUpdate.cs`, `Ppo.cs`,
+Pseudization (see real code in `src/Bascule.RL/PpoUpdate.cs`, `Ppo.cs`,
 `BatchedPpoTrainer.cs`):
 
 ```csharp
@@ -120,7 +139,7 @@ test `Value_target_normalization_keeps_the_critic_bounded` (asserts `ReturnScale
 
 ## 4. The sibling bug: NaN crash (σ collapse / gradient explosion)
 
-Same project, separate fix, mentioned because Evolvatron.Walker likely has it too and it
+Same project, separate fix, mentioned because any PPO codebase can have it too and it
 looks like "training crashed."
 
 - **Symptom:** loss/meanReturn go literally `NaN`; actions become `NaN`; agent teleports to
@@ -141,7 +160,7 @@ See `ActionLayout.ClampLogStd` and `PpoUpdate.UpdateMinibatch(..., out bool step
 
 ---
 
-## 5. How to check another codebase (Evolvatron.Walker, Tensotron showcase)
+## 5. How to check another codebase
 
 Grep for the value loss and ask two questions:
 
@@ -162,9 +181,8 @@ Confirmed status at time of writing:
 
 | Codebase | Location | Status |
 |---|---|---|
-| Tensotron.Godot | `src/Tensotron.Rl/{Ppo,BatchedPpoTrainer,PpoUpdate}.cs` | **FIXED** (value-target norm + NaN guards) |
+| Bascule | `src/Bascule.RL/{Ppo,BatchedPpoTrainer,PpoUpdate}.cs` | **FIXED** (value-target norm + NaN guards) |
 | Tensotron showcase | `lib/Tensotron/showcase/Tensotron.Showcase/Rl/ContinuousPpo.cs` | **FIXED** (value-target norm + NaN guards) — running return-RMS normalization (`ReturnScale`), `logStd` clamped to [-5,2] at sample + update, non-finite-loss skip + finite-grad-norm gate (`LastSkippedUpdates`). Regression test `ShowcaseSmokeTests.Ppo_ValueTargetNormalization_KeepsCriticBounded` (σ_ret calibrates ~10→40, total loss stays <0.3, 0 skipped). |
-| Evolvatron.Walker | `src/Evolvatron.Walker.Training/Ppo/Ppo.cs` | **FIXED** (verified 2026-06-30) — value-target normalization (`_retStd`/`ReturnScale`/`UpdateReturnScale`, value scaled up in GAE), `logStd` clamp [-5,2] at sample + log-prob/entropy, non-finite guard (`TotalSkippedUpdates` + captured-path abort). Also LR anneal + capturable Adam. Remaining gap is running *observation* normalization (not this bug) — see `Evolvatron.Walker/docs/artifacts/ppo-improvements-suggestions.md`. |
 
 A quick health metric to log while you decide: track **value loss** (or explained variance)
 each iteration. A correct critic's value loss has a *fixed scale* and is flat-ish; a value

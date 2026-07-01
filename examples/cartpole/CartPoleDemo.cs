@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tensotron.Godot.Examples;
+namespace Bascule.Godot.Examples;
 
 /// <summary>
 /// Root of the pole-cart example: holds one <see cref="LearningAgent"/> (Train mode) that replicates a

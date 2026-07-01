@@ -10,15 +10,15 @@ config_version=5
 
 [application]
 
-config/name="Tensotron.Godot"
+config/name="Bascule.Godot"
 config/description="Train game AI inside Godot in pure C# via Tensotron — no Python, no native runtime."
 run/main_scene="res://examples/cartpole/CartPoleDemo.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 
 [dotnet]
 
-project/assembly_name="Tensotron.Godot"
+project/assembly_name="Bascule.Godot"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/tensotron/plugin.cfg")
+enabled=PackedStringArray("res://addons/bascule/plugin.cfg")

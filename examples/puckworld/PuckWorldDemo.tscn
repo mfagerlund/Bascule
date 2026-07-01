@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://examples/puckworld/PuckWorldDemo.cs" id="1_demo"]
+[ext_resource type="Script" path="res://addons/bascule/LearningAgent.cs" id="2_agent"]
+[ext_resource type="PackedScene" path="res://examples/puckworld/PuckArena.tscn" id="3_arena"]
+[ext_resource type="Script" path="res://addons/bascule/TrainingHud.cs" id="4_hud"]
+
+[node name="PuckWorldDemo" type="Node2D"]
+script = ExtResource("1_demo")
+TargetIterations = 200
+CheckpointIters = PackedInt32Array(8, 30, 80, 200)
+
+[node name="LearningAgent" type="Node" parent="."]
+script = ExtResource("2_agent")
+Mode = 1
+ArenaScene = ExtResource("3_arena")
+ArenaCount = 48
+Hidden = 64
+Horizon = 256
+Epochs = 4
+MinibatchSize = 512
+LearningRate = 0.0008
+Gamma = 0.9
+EntropyCoef = 0.004
+TargetKl = 0.025
+LrBackoffKlStreak = 4
+LrBackoffMinLr = 0.0003
+
+[node name="TrainingHud" type="CanvasLayer" parent="."]
+script = ExtResource("4_hud")
+Title = "PuckWorld PPO"
+TargetIterations = 200
+ConfigureWindow = true
+WindowSize = Vector2i(1080, 860)
+StackGraphs = false

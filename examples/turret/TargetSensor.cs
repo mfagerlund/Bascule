@@ -1,8 +1,8 @@
 using System;
 using Godot;
-using Tensotron.Rl;
+using Bascule.RL;
 
-namespace Tensotron.Godot.Examples;
+namespace Bascule.Godot.Examples;
 
 /// <summary>
 /// The observation role: reports the geometry the policy needs to aim and shoot — the bearing to the

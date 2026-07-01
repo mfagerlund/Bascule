@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tensotron.Godot.Examples;
+namespace Bascule.Godot.Examples;
 
 /// <summary>
 /// Root of the physics-control example: one <see cref="LearningAgent"/> (Train mode) replicates a

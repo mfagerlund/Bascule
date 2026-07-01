@@ -1,8 +1,8 @@
 using System;
 using Godot;
-using Tensotron.Rl;
+using Bascule.RL;
 
-namespace Tensotron.Godot.Examples;
+namespace Bascule.Godot.Examples;
 
 /// <summary>
 /// A self-contained <b>physics-control</b> arena (the second of v1's three training modes). A

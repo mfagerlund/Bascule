@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://examples/puckworld/PuckWatchDemo.cs" id="1_watch"]
+[ext_resource type="Script" path="res://addons/bascule/LearningAgent.cs" id="2_agent"]
+[ext_resource type="PackedScene" path="res://examples/puckworld/PuckArena.tscn" id="3_arena"]
+
+[node name="PuckWatchDemo" type="Node2D"]
+script = ExtResource("1_watch")
+
+[node name="LearningAgent" type="Node" parent="."]
+script = ExtResource("2_agent")
+Mode = 2
+AutoStart = false
+ArenaScene = ExtResource("3_arena")
+ArenaCount = 16

@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/lib/" />
+  <Folder Name="/lib/Tensotron/" />
+  <Folder Name="/lib/Tensotron/src/">
+    <Project Path="lib/Tensotron/src/Tensotron/Tensotron.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Bascule.RL/Bascule.RL.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Bascule.RL.Tests/Bascule.RL.Tests.csproj" />
+  </Folder>
+  <Project Path="Bascule.Godot.csproj">
+    <BuildType Project="Debug" />
+  </Project>
+</Solution>

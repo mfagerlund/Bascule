@@ -1,8 +1,8 @@
 using System;
 using Godot;
-using Tensotron.Rl;
+using Bascule.RL;
 
-namespace Tensotron.Godot.Examples;
+namespace Bascule.Godot.Examples;
 
 /// <summary>
 /// A self-contained cart-pole arena that advertises all four discovery roles at once: it is its own

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-namespace Tensotron.Godot.Examples;
+namespace Bascule.Godot.Examples;
 
 /// <summary>
 /// Root of the turret example: one <see cref="LearningAgent"/> (Train mode) replicates the multi-node

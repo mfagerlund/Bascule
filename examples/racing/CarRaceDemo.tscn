@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://examples/racing/CarRaceDemo.cs" id="1_demo"]
+[ext_resource type="Script" path="res://addons/bascule/LearningAgent.cs" id="2_agent"]
+[ext_resource type="PackedScene" path="res://examples/racing/RaceCar.tscn" id="3_arena"]
+[ext_resource type="Script" path="res://addons/bascule/TrainingHud.cs" id="4_hud"]
+[ext_resource type="Script" path="res://examples/racing/RaceOverlay.cs" id="5_overlay"]
+
+[node name="CarRaceDemo" type="Node2D"]
+script = ExtResource("1_demo")
+TargetIterations = 60
+
+[node name="LearningAgent" type="Node" parent="."]
+script = ExtResource("2_agent")
+Mode = 1
+ArenaScene = ExtResource("3_arena")
+ArenaCount = 20
+Hidden = 64
+Horizon = 256
+Epochs = 4
+MinibatchSize = 512
+LearningRate = 0.0008
+EntropyCoef = 0.005
+
+[node name="RaceOverlay" type="Node2D" parent="."]
+script = ExtResource("5_overlay")
+
+[node name="TrainingHud" type="CanvasLayer" parent="."]
+script = ExtResource("4_hud")
+Title = "Drift Racer PPO"
+TargetIterations = 60
+ConfigureWindow = true
+WindowSize = Vector2i(1480, 1020)
+StackGraphs = false

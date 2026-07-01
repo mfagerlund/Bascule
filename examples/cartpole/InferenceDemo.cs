@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Tensotron.Godot.Examples;
+namespace Bascule.Godot.Examples;
 
 /// <summary>
 /// The shipping half of the loop: load the <c>ModelResource</c> the training demo saved and run it in

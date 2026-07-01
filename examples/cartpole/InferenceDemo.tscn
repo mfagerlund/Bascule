@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://examples/cartpole/InferenceDemo.cs" id="1_infer"]
-[ext_resource type="Script" path="res://addons/tensotron/LearningAgent.cs" id="2_agent"]
+[ext_resource type="Script" path="res://addons/bascule/LearningAgent.cs" id="2_agent"]
 [ext_resource type="PackedScene" path="res://examples/cartpole/CartPole.tscn" id="3_arena"]
 
 [node name="InferenceDemo" type="Node2D"]

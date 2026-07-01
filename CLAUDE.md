@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Tensotron.Godot is a Godot 4 (.NET) integration for **Tensotron** — a PyTorch-faithful tensor +
+Bascule is a Godot 4 (.NET) integration for **Tensotron** — a PyTorch-faithful tensor +
 autograd library for .NET — that trains game AI (PPO) entirely in-process: no Python, no socket
 bridge, no ONNX/native blob. It is the thin Godot-facing RL layer on top of the engine.
 
@@ -37,12 +37,12 @@ curricula, Python bridge) is **out of scope for v1**.
 These are the whole reason the project is split into layers — respect them in every change:
 
 1. **Tensotron stays pure tensors.** PPO, environments, and rollout buffers are *not* torch, so they
-   live in `src/Tensotron.Rl/`, **never** in the Tensotron engine. The engine remains
+   live in `src/Bascule.RL/`, **never** in the Tensotron engine. The engine remains
    "PyTorch-faithful tensors," full stop.
-2. **The RL core is Godot-free.** `src/Tensotron.Rl/` depends only on `Tensotron` and knows nothing
-   about Godot. The `addons/tensotron/` layer is what adapts Godot nodes to `Tensotron.Rl`'s
+2. **The RL core is Godot-free.** `src/Bascule.RL/` depends only on `Tensotron` and knows nothing
+   about Godot. The `addons/bascule/` layer is what adapts Godot nodes to `Bascule.RL`'s
    `IEnvironment`. This keeps the RL code reusable (console sims, other engines) and unit-testable
-   without launching an editor. If you find yourself adding `using Godot;` to `Tensotron.Rl`, stop.
+   without launching an editor. If you find yourself adding `using Godot;` to `Bascule.RL`, stop.
 
 ## Why the design is batched, not threaded
 
@@ -59,12 +59,12 @@ Do not introduce per-agent threads or per-agent forward passes. Batch across are
 
 ## The Tensotron engine dependency
 
-The engine is wired in as a git submodule under **`lib/Tensotron`**, referenced by `Tensotron.Rl`
+The engine is wired in as a git submodule under **`lib/Tensotron`**, referenced by `Bascule.RL`
 via a relative-path `ProjectReference`; `git clone --recursive` is what pulls it. Read
 **`lib/Tensotron/CLAUDE.md`** before touching anything tensor-related — it is authoritative for the
 engine.
 
-**Reference RL code already exists in the engine** and is the blueprint `Tensotron.Rl` should adapt
+**Reference RL code already exists in the engine** and is the blueprint `Bascule.RL` should adapt
 (not reinvent) — the README calls the RL core "extractable as its own package," and these are what
 gets extracted/generalized:
 
@@ -95,12 +95,12 @@ optional (engine falls back to SIMD CPU). This green-field project has no SDK pi
 ```bash
 # once code exists — there is no solution yet
 dotnet build                              # build the solution (use --verbosity quiet, not -q)
-dotnet test                               # run Tensotron.Rl unit tests (Godot-free, no editor needed)
+dotnet test                               # run Bascule.RL unit tests (Godot-free, no editor needed)
 dotnet test --filter "FullyQualifiedName~Ppo"   # scope to a subset
 
 # Godot project — use the .NET/mono build of Godot 4.7; $GODOT = its install dir.
 # Use the *_console.exe* binary for --headless so stdout/test output appears on Windows.
-"$GODOT/Godot_v4.7-stable_mono_win64.exe" --path . --editor            # open the project; enable the Tensotron plugin under Project Settings -> Plugins
+"$GODOT/Godot_v4.7-stable_mono_win64.exe" --path . --editor            # open the project; enable the Bascule plugin under Project Settings -> Plugins
 "$GODOT/Godot_v4.7-stable_mono_win64_console.exe" --headless --path .  # headless / accelerated training
 ```
 

@@ -1,8 +1,8 @@
 using System;
 using Godot;
-using Tensotron.Rl;
+using Bascule.RL;
 
-namespace Tensotron.Godot.Examples;
+namespace Bascule.Godot.Examples;
 
 /// <summary>
 /// The control role of the turret arena: a continuous "Aim" channel (turn rate) and a discrete "Fire"

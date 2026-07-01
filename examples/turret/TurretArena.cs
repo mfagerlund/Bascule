@@ -1,8 +1,8 @@
 using System;
 using Godot;
-using Tensotron.Rl;
+using Bascule.RL;
 
-namespace Tensotron.Godot.Examples;
+namespace Bascule.Godot.Examples;
 
 /// <summary>
 /// One turret-vs-target arena, and the example that exercises <em>multi-node</em> interface-driven

@@ -4,7 +4,7 @@
 below, 2026-06-30). Targets the **Tensotron engine** (sibling repo), not this repo. The body below is
 the original proposal; the Verdict is the authoritative current decision.
 
-**Author context:** raised while building `Tensotron.Rl` (in-process PPO for Godot). The RL core
+**Author context:** raised while building `Bascule.RL` (in-process PPO for Godot). The RL core
 ports the engine showcase's `CpuMlp`/`CpuActorCritic` — a hand-written scalar-C# forward pass that
 duplicates a network already defined as Tensotron `Linear`/`Sequential` modules. This proposal is
 about removing that duplication at the engine level.
@@ -33,11 +33,11 @@ pieces (1)+(2) only.
 
 ### The consumer's governing constraint is concurrency, not backend-switching
 
-The first real consumer is `Evolvatron.Walker` (design a body → train it → watch it), and
-"train on GPU, infer on CPU, interleaved, single-agent" **is the product loop**, not a demo. But its
-rollout constraint is not the one this proposal targets:
+The first real consumer is an in-process RL trainer where "train on GPU, infer on CPU, interleaved,
+single-agent" **is the product loop**, not a demo. But its rollout constraint is not the one this
+proposal targets:
 
-- Walker's rollout is **thread-per-env**: `Parallel.For` over ~16 envs, each thread a private-scratch
+- That consumer's rollout is **thread-per-env**: `Parallel.For` over ~16 envs, each thread a private-scratch
   `CpuActorCritic.CloneShared()` forward — measured **11.5×** on 16 envs / 32 cores.
 - The NN forward is **~56% of rollout compute** (73 ms forward vs 130 ms serial inner work) — the
   larger half, not a footnote.
@@ -47,7 +47,7 @@ rollout constraint is not the one this proposal targets:
   makes the parallel rollout safe — `CpuMlp` is load-bearing here, not legacy.
 
 A backend *scope* still routes to that one shared-state runtime, so it would force **serializing** the
-rollout forward — a regression on the larger half of rollout cost. Walker's M0 also trains on CPU
+rollout forward — a regression on the larger half of rollout cost. That consumer's early milestone also trains on CPU
 (GPU deferred for tiny nets), so there is no mid-training backend split to bridge yet. Scoped backends
 solve neither the concurrency need nor the open-architecture need.
 
@@ -61,12 +61,12 @@ load-bearing for the parallel rollout. Upside-down at this scope.
 ### Retiring the hand-roll, when it bites — neither lever is scoped backends
 
 `CpuMlp` is real-but-narrow: it handles any width/depth but hardcodes tanh and an MLP shape, and can
-drift from `Linear` semantics. When the first non-tanh activation or non-MLP creature arrives:
+drift from `Linear` semantics. When the first non-tanh activation or non-MLP architecture arrives:
 
 - **Option A — keep `CpuMlp`, close its gaps.** Carry a per-layer activation (torch-named:
   tanh/relu/softsign/identity) instead of hardcoded tanh, and add a parity test asserting
   `CpuActorCritic.Forward` matches `ActorCritic.PolicyMean` so it can't drift. Keeps the 11.5×, zero
-  engine change. Right while creatures stay MLP-shaped.
+  engine change. Right while architectures stay MLP-shaped.
 - **Option B — batched two-phase rollout through the real module.** Per tick: (1) gather live envs'
   obs → one `[N, obs]` `Sequential.Forward` (real module, NoGrad, single runtime call, any
   architecture) with `CpuMatMulThreads` on (the engine's "turn it on for one big-batch trainer" case);
@@ -241,7 +241,7 @@ mixing, where a clear error is preferable to a silent copy.
 3. **Memory** — GPU params + CPU mirror doubles parameter memory. Negligible for control-policy nets;
    note it for larger models.
 
-## Impact on `Tensotron.Godot`
+## Impact on `Bascule`
 
 None required for v1 — the ported `Ppo` works today. When the engine gains scoped backends, delete
 `CpuInference.cs` (`CpuMlp`/`CpuActorCritic`) and run the rollout through the real `ActorCritic` under

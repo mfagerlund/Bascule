@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-namespace Tensotron.Godot.Examples;
+namespace Bascule.Godot.Examples;
 
 /// <summary>
 /// The shipping half of the turret loop: load the model <see cref="TurretDemo"/> saved and run it in
