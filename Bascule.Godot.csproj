@@ -4,6 +4,8 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <Nullable>enable</Nullable>
     <RootNamespace>Bascule.Godot</RootNamespace>
+    <!-- The Godot addon is not a NuGet package; only src/Bascule.RL is published. -->
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <!-- This Godot project lives at the repo root, so its default **/*.cs glob would otherwise

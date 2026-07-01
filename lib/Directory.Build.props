@@ -1,0 +1,7 @@
+<Project>
+  <!-- Intentionally empty. Stops MSBuild's Directory.Build.props search from walking up into the
+       Bascule repo root, so the Tensotron submodule builds with its OWN settings (its pinned
+       hardcoded version, or its own Directory.Build.props when the pin includes one) instead of
+       inheriting Bascule's package metadata / MinVer. This keeps the Tensotron dependency that
+       `dotnet pack src/Bascule.RL` emits deterministic. -->
+</Project>

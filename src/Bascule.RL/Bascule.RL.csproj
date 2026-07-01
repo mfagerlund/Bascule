@@ -8,19 +8,14 @@
     <AssemblyName>Bascule.RL</AssemblyName>
   </PropertyGroup>
 
-  <!-- NuGet package metadata. Versioning is manual until a release pipeline exists.
-       The ProjectReference to Tensotron below is packable, so `dotnet pack` records it as a
-       package dependency (id=Tensotron) rather than bundling the DLL — Tensotron must be on
-       nuget.org for this package to restore. -->
+  <!-- NuGet package identity. Shared metadata (authors, project/repo URL, license, readme,
+       symbols/SourceLink) and MinVer tag-driven versioning live in Directory.Build.props.
+       The ProjectReference to the packable Tensotron engine is recorded by `dotnet pack` as a
+       package dependency (id=Tensotron), not a bundled DLL — Tensotron must be on nuget.org for
+       this package to restore. -->
   <PropertyGroup>
     <PackageId>Bascule.RL</PackageId>
-    <Version>0.1.0-alpha</Version>
-    <Authors>Mattias Fagerlund</Authors>
     <Description>A Godot-free, batched-PPO reinforcement-learning core for .NET, built on the Tensotron tensor + autograd engine. Multi-channel ControlSpec, in-process training and inference, byte-exact model save/load — no Python, no socket bridge, no native runtime.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/mfagerlund/Bascule</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
     <PackageTags>reinforcement-learning;ppo;rl;machine-learning;godot;game-ai;tensotron</PackageTags>
   </PropertyGroup>
 
@@ -28,8 +23,6 @@
     <ProjectReference Include="..\..\lib\Tensotron\src\Tensotron\Tensotron.csproj" />
   </ItemGroup>
 
-  <!-- Pack a NuGet-facing readme (the repo README has repo-internal links/paths that read poorly on
-       NuGet); ship the MIT license text too. -->
   <ItemGroup>
     <None Include="PACKAGE.md" Pack="true" PackagePath="\README.md" />
     <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />

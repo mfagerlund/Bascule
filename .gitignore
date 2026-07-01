@@ -18,3 +18,6 @@ data_*/
 # OS
 Thumbs.db
 .DS_Store
+
+# Local scratch (drafts, notes) — never committed
+scratch/

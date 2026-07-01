@@ -2,6 +2,10 @@
 
 **Train game AI inside Godot — in pure C#, no Python, no native runtime.**
 
+[![CI](https://github.com/mfagerlund/Bascule/actions/workflows/ci.yml/badge.svg)](https://github.com/mfagerlund/Bascule/actions/workflows/ci.yml)
+[![NuGet: Bascule.RL](https://img.shields.io/nuget/vpre/Bascule.RL.svg?label=Bascule.RL)](https://www.nuget.org/packages/Bascule.RL)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A Godot 4 (.NET) integration for [Tensotron](https://github.com/mfagerlund/Tensotron), the
 PyTorch-faithful tensor + autograd library for .NET. Drop a few components onto a node, declare
 what it can *see*, *do*, and *be rewarded for*, set it to **Train** and press **Play**, and watch it
@@ -28,6 +32,9 @@ git clone --recursive https://github.com/mfagerlund/Bascule.git
 cd Bascule
 dotnet test          # builds the RL core + runs the unit tests (no Godot needed)
 ```
+
+The Godot-free RL core is also on NuGet — `dotnet add package Bascule.RL --prerelease` — for console
+sims, tests, or other engines.
 
 Then open the project in the **.NET/mono build of Godot 4.7+**, enable the **Bascule** plugin under
 *Project Settings → Plugins*, open an example scene under `examples/`, and press **Play**. See
@@ -335,8 +342,9 @@ RL trainer, the environment abstraction, and the Godot bindings.
 
 Tensotron is wired in as a **git submodule** under `lib/Tensotron`, and `Bascule.RL` references it
 by relative path — so `git clone --recursive` builds the whole solution on any machine, pinned to an
-exact engine commit. When Tensotron ships on nuget.org the reference becomes a versioned
-`PackageReference`, and the submodule stays only for working on the engine in place.
+exact engine commit. Tensotron is published on nuget.org as `Tensotron`; Bascule keeps the submodule
+`ProjectReference` for engine co-development, and `dotnet pack` records it as a versioned package
+dependency for consumers of `Bascule.RL`.
 
 Both are **MIT, free, forever.** The Godot layer is the killer demo for the library, not a paywall.
 

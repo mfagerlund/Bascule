@@ -1,0 +1,36 @@
+<Project>
+
+  <!-- Shared package metadata + modern packaging for the publishable library in this repo
+       (src/Bascule.RL). The Godot addon and tests set IsPackable=false and aren't packed.
+       NOTE: lib/Directory.Build.props (intentionally empty) shields the Tensotron submodule from
+       these props so the pinned engine keeps its own version/metadata. -->
+  <PropertyGroup>
+    <Authors>Mattias Fagerlund</Authors>
+    <Company>Mattias Fagerlund</Company>
+    <PackageProjectUrl>https://github.com/mfagerlund/Bascule</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mfagerlund/Bascule</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>See CHANGELOG.md.</PackageReleaseNotes>
+
+    <!-- Deterministic, source-linked, symbol-shipping builds. SourceLink (repo+commit) is bundled
+         in the .NET 8 SDK; these switches make it resolve and ship a .snupkg. -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <!-- Tag-driven versioning: `git tag v0.1.1` -> package 0.1.1. PrivateAssets=all so MinVer never
+       leaks as a package dependency. -->
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="7.0.0" PrivateAssets="all" />
+  </ItemGroup>
+  <PropertyGroup>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+  </PropertyGroup>
+
+</Project>

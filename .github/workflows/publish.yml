@@ -3,6 +3,7 @@ name: Publish Bascule.RL to NuGet
 # Trusted publishing (OIDC → short-lived key) — no stored API key.
 # nuget.org policy: Repository Owner = mfagerlund, Repository = Bascule, Workflow File = publish.yml.
 # Publish Tensotron first: Bascule.RL depends on Tensotron being on nuget.org to restore.
+# Gated on the test job so a broken tag can't ship an immutable package.
 on:
   push:
     tags:
@@ -10,17 +11,31 @@ on:
   workflow_dispatch:
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet test tests/Bascule.RL.Tests/Bascule.RL.Tests.csproj -c Release
+
   publish:
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       id-token: write   # enable GitHub OIDC token issuance for trusted publishing
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive   # Bascule.RL builds against the Tensotron engine submodule
+          fetch-depth: 0          # MinVer derives the version from git history + tags
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '8.0.x'
 
