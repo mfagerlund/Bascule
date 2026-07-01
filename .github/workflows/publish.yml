@@ -1,0 +1,37 @@
+name: Publish Bascule.RL to NuGet
+
+# Trusted publishing (OIDC → short-lived key) — no stored API key.
+# nuget.org policy: Repository Owner = mfagerlund, Repository = Bascule, Workflow File = publish.yml.
+# Publish Tensotron first: Bascule.RL depends on Tensotron being on nuget.org to restore.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # enable GitHub OIDC token issuance for trusted publishing
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive   # Bascule.RL builds against the Tensotron engine submodule
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Pack
+        run: dotnet pack src/Bascule.RL/Bascule.RL.csproj -c Release -o artifacts
+
+      - name: NuGet login (OIDC -> temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: mfagerlund   # nuget.org profile name (not email)
+
+      - name: Push
+        run: dotnet nuget push "artifacts/*.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate

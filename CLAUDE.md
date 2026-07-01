@@ -6,12 +6,12 @@ Bascule is a Godot 4 (.NET) integration for **Tensotron** — a PyTorch-faithful
 autograd library for .NET — that trains game AI (PPO) entirely in-process: no Python, no socket
 bridge, no ONNX/native blob. It is the thin Godot-facing RL layer on top of the engine.
 
-## Status: spec stage — no code yet
+## Status: v1, working
 
-`README.md` **is the design spec**, not just docs. Read it in full before writing anything — every
-architectural decision below is justified there. The repo currently contains only `README.md` and is
-not yet a git repo or a .NET solution. When you scaffold, follow the planned layout in the README's
-"What's in the box" section; do not invent a different structure without reason.
+The RL core, the Godot addon, the example scenes, and the unit-test suite all build and run today
+(`dotnet test` is green). `README.md` is also the design spec — every architectural decision below is
+justified there; read it before making structural changes. The on-disk layout follows the README's
+"What's in the box" section; don't reshape it without reason.
 
 ## The one load-bearing idea: interface-driven discovery
 
@@ -89,11 +89,10 @@ Engine constraints that directly shape RL/Godot code:
 
 Prerequisites: the **.NET/mono build of Godot 4.7** (the .NET editor, *not* the standard build) and a
 **.NET SDK** that can build `net8.0` (the engine targets `net8.0`; any 8.x+ SDK works). A CUDA GPU is
-optional (engine falls back to SIMD CPU). This green-field project has no SDK pin yet; target
-`Godot.NET.Sdk/4.7.0` to match the editor.
+optional (engine falls back to SIMD CPU). The Godot project is pinned to `Godot.NET.Sdk/4.7.0` to
+match the editor; the RL core and tests are plain `Microsoft.NET.Sdk` targeting `net8.0`.
 
 ```bash
-# once code exists — there is no solution yet
 dotnet build                              # build the solution (use --verbosity quiet, not -q)
 dotnet test                               # run Bascule.RL unit tests (Godot-free, no editor needed)
 dotnet test --filter "FullyQualifiedName~Ppo"   # scope to a subset
