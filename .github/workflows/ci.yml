@@ -19,7 +19,7 @@ jobs:
           submodules: recursive   # Bascule.RL builds against the Tensotron engine submodule
           fetch-depth: 0          # MinVer derives the version from git history + tags
 
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '8.0.x'
 
