@@ -118,3 +118,9 @@ pole-cart + turret example scenes.
 
 **Out:** distributed training, Python bridge, visual graph editor, RL algorithm zoo, automatic
 curricula.
+
+## Project card
+
+`project-card/` holds this project's one-liner, tags and image for the cross-project index.
+When the purpose or the look of the project changes materially, regenerate it with
+`/project-index Bascule`.
