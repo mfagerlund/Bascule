@@ -27,7 +27,7 @@
   <!-- Tag-driven versioning: `git tag v0.1.1` -> package 0.1.1. PrivateAssets=all so MinVer never
        leaks as a package dependency. -->
   <ItemGroup>
-    <PackageReference Include="MinVer" Version="7.0.0" PrivateAssets="all" />
+    <PackageReference Include="MinVer" Version="8.0.0" PrivateAssets="all" />
   </ItemGroup>
   <PropertyGroup>
     <MinVerTagPrefix>v</MinVerTagPrefix>
